@@ -1,15 +1,16 @@
-import {createSiteMenuTemplate} from './view/site-menu.js';
-import {createTripInfoTemplate} from './view/info.js';
-import {createTripFilterTemplate} from './view/filter.js';
-import {createTripSortTemplate} from './view/sort.js';
-import {createAddNewPointTemplate} from './view/add-new-point.js';
-import {createEditPointTemplate} from './view/edit-point.js';
-import {createPointTemplate} from './view/point.js';
-import {createEventsListTemplate} from './view/event-list.js';
-import {generateEvent} from './mock/task-mock';
+import SiteMenuView from './view/site-menu.js';
+import TripInfoView from './view/info.js';
+import FilterView from './view/filter.js';
+import TripSortView from './view/sort.js';
+import EditPointView from './view/edit-point.js';
+import PointView from './view/point.js';
+import EventsListView from './view/event-list.js';
+import {renderPoints} from './mock/task-mock';
+import {render, RenderPosition} from './utils.js';
 
+const Keys = { ESCAPE: 'Escape', ESC: 'Esc' };
 const POINTS_COUNT = 15;
-const point = new Array(POINTS_COUNT).fill().map(generateEvent);
+const points = renderPoints(POINTS_COUNT);
 
 const siteHeaderElement = document.querySelector('.page-header');
 const tripControlsElement = siteHeaderElement.querySelector('.trip-controls');
@@ -18,24 +19,57 @@ const tripFiltersElement = siteHeaderElement.querySelector('.trip-controls__filt
 const siteMainElement = document.querySelector('.page-main');
 const tripEventsElement = siteMainElement.querySelector('.trip-events');
 
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-
-render(tripControlsElement, createSiteMenuTemplate(), 'beforeend');
-render(tripMainElement, createTripInfoTemplate(point), 'afterbegin');
-render(tripFiltersElement, createTripFilterTemplate(), 'beforeend');
-render(tripEventsElement, createTripSortTemplate(), 'beforeend');
-render(tripEventsElement, createEventsListTemplate(), 'beforeend');
+render(tripControlsElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+render(tripMainElement,  new TripInfoView(points).getElement(), RenderPosition.AFTERBEGIN);
+render(tripFiltersElement, new FilterView().getElement(), RenderPosition.BEFOREEND);
+render(tripEventsElement, new TripSortView().getElement(), RenderPosition.BEFOREEND);
+render(tripEventsElement, new EventsListView().getElement(), RenderPosition.BEFOREEND);
 
 const eventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
-render(eventsListElement, createEditPointTemplate(point[0]), 'afterbegin');
-render(eventsListElement, createAddNewPointTemplate(point[1]), 'beforeend');
+const renderPoint = (pointsListElement, point) => {
+  const pointComponent = new PointView(point).getElement();
+  const pointEditComponent = new EditPointView(point).getElement();
+  const eventButton = pointComponent.querySelector('.event__rollup-btn');
+  const editForm = pointEditComponent.querySelector('form');
+  const closeFormButton = pointEditComponent.querySelector('.event__rollup-btn');
 
-for (let i=0; i < POINTS_COUNT; i++) {
-  render(eventsListElement, createPointTemplate(point[i]), 'beforeend');
-}
+  const replacePointToForm = () => {
+    pointsListElement.replaceChild(pointEditComponent, pointComponent);
+  };
+
+  const replaceFormToPoint = () => {
+    pointsListElement.replaceChild(pointComponent, pointEditComponent);
+  };
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
+  eventButton.addEventListener('click', () => {
+    replacePointToForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  editForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToPoint();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  closeFormButton.addEventListener('click', () => {
+    replaceFormToPoint();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  render(pointsListElement, pointComponent, RenderPosition.BEFOREEND);
+};
+
+points.forEach((point) => {
+  renderPoint(eventsListElement, point);
+});
 

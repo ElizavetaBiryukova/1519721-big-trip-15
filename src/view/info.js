@@ -1,8 +1,9 @@
 import {
-  getEventPeriod
+  getEventPeriod,
+  createElement
 } from '../utils.js';
 
-export const createTripInfoTemplate = (points) => {
+const createTripInfoTemplate = (points) => {
 
   const route = points.map((point) => (
     point.destination.name
@@ -26,3 +27,26 @@ export const createTripInfoTemplate = (points) => {
       </p>
     </section>`;
 };
+
+export default class TripInfo {
+  constructor(points) {
+    this._element = null;
+    this._points = points;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._points);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

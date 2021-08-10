@@ -1,4 +1,4 @@
-import { humanizeFullDate, humanizeDuration, humanizeDate, humanizeTime} from '../utils.js';
+import { humanizeFullDate, humanizeDuration, humanizeDate, humanizeTime, createElement} from '../utils.js';
 
 
 const createOffersTemplate = (offers) => {
@@ -13,7 +13,7 @@ const createOffersTemplate = (offers) => {
   return optionsMarkup;
 };
 
-export const createPointTemplate = (point) => {
+const createPointTemplate = (point) => {
   const {dateFrom, dateTo, destination, offers, type, basePrice} = point;
   const favoriteButtonClasses = point.isFavorite ? 'event__favorite-btn event__favorite-btn--active' : 'event__favorite-btn';
   const duration = humanizeDuration(point.dateFrom, point.dateTo);
@@ -51,3 +51,26 @@ export const createPointTemplate = (point) => {
       </div>
     </li>`;
 };
+
+export default class Point {
+  constructor(point) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

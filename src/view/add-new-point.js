@@ -1,4 +1,4 @@
-import { humanizeFullDateAndTime} from '../utils.js';
+import { humanizeFullDateAndTime, createElement} from '../utils.js';
 import {DESTINATION, TYPES, optionsMap} from '../mock/task-mock';
 
 const createDestinationMarkup = (destinations) => {
@@ -17,7 +17,7 @@ const createPictureMarkup = (pictures) => (
     .join(' ')
 );
 
-export const createPictureContainerMarkup = (pictures) => {
+const createPictureContainerMarkup = (pictures) => {
   const picturesMarkup = '';
   if (pictures.length) {
     return `<div class="event__photos-container">
@@ -57,7 +57,7 @@ const createOffersList = ({type}) => {
   return availableOffersList;
 };
 
-export const createAddNewPointTemplate = (point) => {
+const createAddNewPointTemplate = (point) => {
   const {basePrice, destination, dateFrom, dateTo, type} = point;
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -121,3 +121,25 @@ export const createAddNewPointTemplate = (point) => {
   </li>`;
 };
 
+export default class AddPoint {
+  constructor(points) {
+    this._element = null;
+    this._points = points;
+  }
+
+  getTemplate() {
+    return createAddNewPointTemplate(this._points);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

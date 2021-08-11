@@ -263,3 +263,9 @@ export const generateEvent = () => {
     type,
   };
 };
+
+export const renderPoints = (count) => {
+  const points = new Array(count).fill().map(generateEvent).sort((a, b) => dayjs(a.dateFrom) - dayjs(b.dateFrom));
+
+  return points;
+};

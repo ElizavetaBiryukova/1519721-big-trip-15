@@ -1,4 +1,4 @@
-import { humanizeFullDateAndTime} from '../utils.js';
+import { humanizeFullDateAndTime, createElement} from '../utils.js';
 import {DESTINATION, TYPES, optionsMap} from '../mock/task-mock';
 
 
@@ -40,7 +40,7 @@ const createOffersList = ({type, offers}) => {
   return offersList;
 };
 
-export const createEditPointTemplate = (point) => {
+const createEditPointTemplate = (point) => {
   const{basePrice, destination, type, offers, dateFrom, dateTo} = point;
   const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
   return `<li class="trip-events__item">
@@ -104,3 +104,25 @@ export const createEditPointTemplate = (point) => {
     </li>`;
 };
 
+export default class EditPoint {
+  constructor(point) {
+    this._element = null;
+    this._point = point;
+  }
+
+  getTemplate() {
+    return createEditPointTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

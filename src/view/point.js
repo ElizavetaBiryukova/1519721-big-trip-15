@@ -1,5 +1,5 @@
-import { humanizeFullDate, humanizeDuration, humanizeDate, humanizeTime, createElement} from '../utils.js';
-
+import { humanizeFullDate, humanizeDuration, humanizeDate, humanizeTime } from '../utils/point.js';
+import AbstractView from './abstract.js';
 
 const createOffersTemplate = (offers) => {
   let optionsMarkup = '';
@@ -52,25 +52,25 @@ const createPointTemplate = (point) => {
     </li>`;
 };
 
-export default class Point {
-  constructor(point) {
-    this._point = point;
-    this._element = null;
+export default class Point extends AbstractView {
+  constructor(points) {
+    super();
+    this._points = points;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createPointTemplate(this._point);
+    return createPointTemplate(this._points);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callbacks.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setPointClickHandler(callback) {
+    this._callbacks.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }

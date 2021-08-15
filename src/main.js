@@ -7,7 +7,7 @@ import PointView from './view/point.js';
 import EventsListView from './view/event-list.js';
 import NoPointView from './view/no-point.js';
 import {renderPoints} from './mock/task-mock';
-import {render, RenderPosition} from './utils.js';
+import {render, RenderPosition, replace} from './utils/render.js';
 
 const Keys = { ESCAPE: 'Escape', ESC: 'Esc' };
 const POINTS_COUNT = 15;
@@ -22,23 +22,20 @@ const siteMainElement = document.querySelector('.page-main');
 const tripEventsElement = siteMainElement.querySelector('.trip-events');
 
 
-render(tripEventsElement, new EventsListView().getElement(), RenderPosition.BEFOREEND);
+render(tripEventsElement, new EventsListView(), RenderPosition.BEFOREEND);
 
 const eventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
 const renderPoint = (pointsListElement, point) => {
-  const pointComponent = new PointView(point).getElement();
-  const pointEditComponent = new EditPointView(point).getElement();
-  const eventButton = pointComponent.querySelector('.event__rollup-btn');
-  const editForm = pointEditComponent.querySelector('form');
-  const closeFormButton = pointEditComponent.querySelector('.event__rollup-btn');
+  const pointComponent = new PointView(point);
+  const pointEditComponent = new EditPointView(point);
 
   const replacePointToForm = () => {
-    pointsListElement.replaceChild(pointEditComponent, pointComponent);
+    replace(pointEditComponent, pointComponent);
   };
 
   const replaceFormToPoint = () => {
-    pointsListElement.replaceChild(pointComponent, pointEditComponent);
+    replace(pointComponent, pointEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -49,18 +46,17 @@ const renderPoint = (pointsListElement, point) => {
     }
   };
 
-  eventButton.addEventListener('click', () => {
+  pointComponent.setPointClickHandler(() => {
     replacePointToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  editForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  pointEditComponent.setEditFormSubmitHandler(() => {
     replaceFormToPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  closeFormButton.addEventListener('click', () => {
+  pointEditComponent.setEditFormCloseHandler(() => {
     replaceFormToPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
@@ -70,17 +66,17 @@ const renderPoint = (pointsListElement, point) => {
 
 const renderEventsListElement = (pointsContainer, pointsElement) => {
   if (points.length === 0) {
-    render(pointsContainer, new NoPointView().getElement(), RenderPosition.BEFOREEND);
+    render(pointsContainer, new NoPointView(), RenderPosition.BEFOREEND);
   }
-  render(tripMainElement,  new TripInfoView(points).getElement(), RenderPosition.AFTERBEGIN);
-  render(tripEventsElement, new TripSortView().getElement(), RenderPosition.BEFOREEND);
+  render(tripMainElement,  new TripInfoView(points), RenderPosition.AFTERBEGIN);
+  render(tripEventsElement, new TripSortView(), RenderPosition.BEFOREEND);
 
   pointsElement.forEach((pointElement) => {
     renderPoint(pointsContainer, pointElement);
   });
 };
 
-render(tripControlsElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-render(tripFiltersElement, new FilterView().getElement(), RenderPosition.BEFOREEND);
+render(tripControlsElement, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(tripFiltersElement, new FilterView(), RenderPosition.BEFOREEND);
 
 renderEventsListElement(eventsListElement, points);

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomInteger, shuffleArray, getRandomArray} from '../utils';
+import {getRandomInteger, shuffleArray, getRandomArray} from '../utils/common.js';
 
 const SENTENCE_COUNT = 5;
 const MIN_PICTURE = 1;

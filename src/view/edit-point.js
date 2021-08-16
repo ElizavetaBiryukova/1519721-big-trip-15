@@ -1,5 +1,12 @@
-import { humanizeFullDateAndTime, createElement} from '../utils.js';
-import {DESTINATION, TYPES, optionsMap} from '../mock/task-mock';
+import {
+  humanizeFullDateAndTime
+} from '../utils/point.js';
+import {
+  DESTINATION,
+  TYPES,
+  optionsMap
+} from '../mock/task-mock';
+import AbstractView from './abstract.js';
 
 
 const createDestinationTemplate = (destinations) => {
@@ -20,11 +27,18 @@ const createEventTypesListTemplate = () => {
   return eventTypesList;
 };
 
-const createOffersList = ({type, offers}) => {
+const createOffersList = ({
+  type,
+  offers,
+}) => {
   const availableOffers = optionsMap.get(type);
 
   const offersList = availableOffers.map((option) => {
-    const {title, price, id} = option;
+    const {
+      title,
+      price,
+      id,
+    } = option;
     const isOfferSelected = offers ? offers.some((offer) => offer.id === id) : false;
 
     return `<div class="event__offer-selector">
@@ -41,7 +55,14 @@ const createOffersList = ({type, offers}) => {
 };
 
 const createEditPointTemplate = (point) => {
-  const{basePrice, destination, type, offers, dateFrom, dateTo} = point;
+  const {
+    basePrice,
+    destination,
+    type,
+    offers,
+    dateFrom,
+    dateTo,
+  } = point;
   const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
   return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -104,25 +125,40 @@ const createEditPointTemplate = (point) => {
     </li>`;
 };
 
-export default class EditPoint {
-  constructor(point) {
-    this._element = null;
-    this._point = point;
+export default class EditPoint extends AbstractView {
+  constructor(points) {
+    super();
+    this._points = points;
+
+    this._editFormSubmitHandler = this._editFormSubmitHandler.bind(this);
+    this._editFormCloseHandler = this._editFormCloseHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditPointTemplate(this._point);
+    return createEditPointTemplate(this._points);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editFormSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callbacks.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditFormSubmitHandler(callback) {
+    this._callbacks.formSubmit = callback;
+    this.getElement()
+      .querySelector('form')
+      .addEventListener('submit', this._editFormSubmitHandler);
+  }
+
+  _editFormCloseHandler(evt) {
+    evt.preventDefault();
+    this._callbacks.formClose();
+  }
+
+  setEditFormCloseHandler(callback) {
+    this._callbacks.formClose = callback;
+    this.getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._editFormCloseHandler);
   }
 }

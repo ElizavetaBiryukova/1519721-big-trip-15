@@ -1,5 +1,6 @@
-import { humanizeFullDateAndTime, createElement} from '../utils.js';
+import { humanizeFullDateAndTime } from '../utils/point.js';
 import {DESTINATION, TYPES, optionsMap} from '../mock/task-mock';
+import AbstractView from './abstract.js';
 
 const createDestinationMarkup = (destinations) => {
   let optionsMarkup = '';
@@ -121,25 +122,13 @@ const createAddNewPointTemplate = (point) => {
   </li>`;
 };
 
-export default class AddPoint {
+export default class AddPoint extends AbstractView {
   constructor(points) {
-    this._element = null;
+    super();
     this._points = points;
   }
 
   getTemplate() {
     return createAddNewPointTemplate(this._points);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

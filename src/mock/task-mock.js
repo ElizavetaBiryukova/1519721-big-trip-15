@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {getRandomInteger, shuffleArray, getRandomArray} from '../utils/common.js';
+import {nanoid} from 'nanoid';
 
 const SENTENCE_COUNT = 5;
 const MIN_PICTURE = 1;
@@ -250,6 +251,7 @@ export const generateEvent = () => {
   const type = generateTypes();
 
   return {
+    id: nanoid(),
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom: firstRandomDate < secondRandomDate ? firstRandomDate : secondRandomDate,
     dateTo: firstRandomDate < secondRandomDate ? secondRandomDate : firstRandomDate,

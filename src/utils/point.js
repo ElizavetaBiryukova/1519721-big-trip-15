@@ -60,6 +60,12 @@ const getEventPeriod = (startingPoint, endingPoint) => {
   return `${humanizeDate(startingPoint.dateFrom)}&nbsp;&mdash;&nbsp;${humanizeDate(endingPoint.dateTo)}`;
 };
 
+export const sortByDate = (pointA, pointB) => dayjs(pointA.dateFrom) - dayjs(pointB.dateFrom);
+
+export const sortByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
+
+export const sortByTime = (pointA, pointB) => (dayjs(pointB.dateTo) - dayjs(pointB.dateFrom)) - (dayjs(pointA.dateTo) - dayjs(pointA.dateFrom));
+
 export {
   humanizeDuration,
   isEventComing,

@@ -10,12 +10,21 @@ import {
   updateItem
 } from '../utils/common.js';
 import PointPresenter from '../presenter/point.js';
+import {
+  sortByDate,
+  sortByPrice,
+  sortByTime
+} from '../utils/point.js';
+import {
+  SortType
+} from '../const.js';
 
 
 export default class Events {
   constructor(pointsContainer) {
     this._pointsContainer = pointsContainer;
     this._pointPresenters = new Map();
+    this._currentSortType = SortType.DAY;
 
     this._pointsComponent = new EventsListView();
     this._sortComponent = new TripSortView();
@@ -23,6 +32,7 @@ export default class Events {
 
     this._changePointHandler = this._changePointHandler.bind(this);
     this._сhangeModeHandler = this._сhangeModeHandler.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(points) {
@@ -42,8 +52,34 @@ export default class Events {
     this._pointPresenters.get(updatedPoint.id).init(updatedPoint);
   }
 
+  _sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this._points.sort(sortByDate);
+        break;
+      case SortType.PRICE:
+        this._points.sort(sortByPrice);
+        break;
+      case SortType.TIME:
+        this._points.sort(sortByTime);
+        break;
+    }
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._sortPoints(sortType);
+    this._clearPoints();
+    this._renderEventsList();
+  }
+
   _renderSort() {
+    this._sortComponent = new TripSortView(this._currentSortType);
     render(this._pointsComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderPoint(point) {

@@ -1,7 +1,7 @@
 import SiteMenuView from './view/site-menu.js';
 import TripInfoView from './view/info.js';
 import FilterView from './view/filter.js';
-import {renderPoints} from './mock/task-mock';
+import {renderPoints} from './mock/point-mock';
 import {render, RenderPosition} from './utils/render.js';
 import EventsPresenter from './presenter/events.js';
 

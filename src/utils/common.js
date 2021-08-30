@@ -34,3 +34,13 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1),
   ];
 };
+
+export const isArrayEmpty = (array) =>{
+  if (!Array.isArray(array)) {
+    return false;
+  }
+  if (array.length === 0) {
+    return true;
+  }
+  return false;
+};

@@ -67,7 +67,7 @@ const createEditPointTemplate = (data, destinations) => {
     isDescription,
     isPictures,
   } = data;
-  // console.log(destination.name);
+
   return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">

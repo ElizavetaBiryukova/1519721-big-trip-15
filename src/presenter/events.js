@@ -27,7 +27,7 @@ export default class Events {
     this._currentSortType = SortType.DAY;
 
     this._pointsComponent = new EventsListView();
-    this._sortComponent = new TripSortView();
+    this._sortComponent = new TripSortView(this._currentSortType);
     this._noPointComponent = new NoPointView();
 
     this._changePointHandler = this._changePointHandler.bind(this);
@@ -82,9 +82,9 @@ export default class Events {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointsComponent, this._changePointHandler, this._сhangeModeHandler);
-    pointPresenter.init(point);
+  _renderPoint(point, destinations) {
+    const pointPresenter = new PointPresenter(this._pointsComponent, this._changePointHandler, this._сhangeModeHandler, this._destinations);
+    pointPresenter.init(point, destinations);
     this._pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -95,9 +95,7 @@ export default class Events {
   }
 
   _renderPoints() {
-    this._points
-      .slice()
-      .forEach((point) => this._renderPoint(point));
+    this._points.forEach((point) => this._renderPoint(point));
   }
 
   _renderNoPoints() {

@@ -1,6 +1,7 @@
 import { render, RenderPosition, replace, remove } from '../utils/render.js';
 import EditPointView from '../view/edit-point';
 import PointView from '../view/point.js';
+import { destinations } from '../mock/destination-mock';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -32,7 +33,7 @@ export default class Point {
     const prevPointEditComponent = this._pointEditComponent;
 
     this._pointComponent = new PointView(point);
-    this._pointEditComponent = new EditPointView(point);
+    this._pointEditComponent = new EditPointView(point, destinations);
 
     this._pointComponent.setPointEditClickHandler(this._pointEditClickHandler);
     this._pointComponent.setFavouriteClickHandler(this._favouriteClickHandler);
@@ -83,6 +84,7 @@ export default class Point {
   _escKeyDownHandler(evt) {
     if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
       evt.preventDefault();
+      this._pointEditComponent.reset(this._point);
       this._replaceFormToPoint();
     }
   }
@@ -109,6 +111,8 @@ export default class Point {
   }
 
   _editFormCloseHandler() {
+    this._pointEditComponent.reset(this._point);
     this._replaceFormToPoint();
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 }

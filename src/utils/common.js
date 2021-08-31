@@ -35,12 +35,6 @@ export const updateItem = (items, update) => {
   ];
 };
 
-export const isArrayEmpty = (array) =>{
-  if (!Array.isArray(array)) {
-    return false;
-  }
-  if (array.length === 0) {
-    return true;
-  }
-  return false;
-};
+export const isArrayEmpty = (array) => (
+  (Array.isArray(array) && array.length === 0)
+);

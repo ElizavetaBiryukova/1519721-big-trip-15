@@ -21,7 +21,10 @@ import {
 
 
 export default class Events {
-  constructor(pointsContainer) {
+  constructor(pointsContainer, pointsModel, destinationsModel) {
+    this._pointsModel = pointsModel;
+    this._destinationsModel = destinationsModel;
+
     this._pointsContainer = pointsContainer;
     this._pointPresenters = new Map();
     this._currentSortType = SortType.DAY;
@@ -41,6 +44,10 @@ export default class Events {
     render(this._pointsContainer, this._pointsComponent, RenderPosition.BEFOREEND);
 
     this._renderEventsList();
+  }
+
+  _getPoints() {
+    return this._pointsModel.getPoints();
   }
 
   _сhangeModeHandler() {

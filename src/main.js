@@ -6,7 +6,7 @@ import {render, RenderPosition} from './utils/render.js';
 import EventsPresenter from './presenter/events.js';
 import PointsModel from './model/points.js';
 import DestinationsModel from './model/destinations.js';
-import { destinations } from './mock/destination.js';
+import { destinations } from './mock/destination-mock.js';
 
 const POINTS_COUNT =15;
 const points = renderPoints(POINTS_COUNT);
@@ -31,4 +31,4 @@ render(tripFiltersElement, new FilterView(), RenderPosition.BEFOREEND);
 
 
 const eventsPresenter = new EventsPresenter(tripEventsElement, pointsModel, destinationsModel);
-eventsPresenter.init(points);
+eventsPresenter.init();

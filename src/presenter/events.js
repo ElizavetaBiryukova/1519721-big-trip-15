@@ -6,9 +6,9 @@ import {
   RenderPosition,
   remove
 } from '../utils/render.js';
-import {
-  updateItem
-} from '../utils/common.js';
+// import {
+//   updateItem
+// } from '../utils/common.js';
 import PointPresenter from '../presenter/point.js';
 import {
   sortByDate,
@@ -38,15 +38,21 @@ export default class Events {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(points) {
-    this._points = points.slice();
-
+  init() {
     render(this._pointsContainer, this._pointsComponent, RenderPosition.BEFOREEND);
 
     this._renderEventsList();
   }
 
   _getPoints() {
+    switch (this._currentSortType) {
+      case SortType.DAY:
+        return this._pointsModel.getPoints().slice().sort(sortByDate);
+      case SortType.PRICE:
+        return this._pointsModel.getPoints().slice().sort(sortByPrice);
+      case SortType.TIME:
+        return this._pointsModel.getPoints().slice().sort(sortByTime);
+    }
     return this._pointsModel.getPoints();
   }
 
@@ -55,30 +61,15 @@ export default class Events {
   }
 
   _changePointHandler(updatedPoint) {
-    this._points = updateItem(this._points, updatedPoint);
+    //Здесь будет вызов обновления модели
     this._pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  }
-
-  _sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.DAY:
-        this._points.sort(sortByDate);
-        break;
-      case SortType.PRICE:
-        this._points.sort(sortByPrice);
-        break;
-      case SortType.TIME:
-        this._points.sort(sortByTime);
-        break;
-    }
-    this._currentSortType = sortType;
   }
 
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._sortPoints(sortType);
+    this._currentSortType = sortType;
     this._clearPoints();
     this._renderEventsList();
   }
@@ -102,7 +93,9 @@ export default class Events {
   }
 
   _renderPoints() {
-    this._points.forEach((point) => this._renderPoint(point));
+    this._getPoints().forEach((points) => {
+      this._renderPoint(points, this._destinationsModel.getDestinations());
+    });
   }
 
   _renderNoPoints() {
@@ -110,11 +103,12 @@ export default class Events {
   }
 
   _renderEventsList() {
-    if (this._points.length === 0) {
+    if (this._getPoints.length === 0) {
       this._renderNoPoints();
+      return;
     }
 
     this._renderSort();
-    this._renderPoints();
+    this._renderPoints(this._pointsModel);
   }
 }

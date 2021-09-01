@@ -2,6 +2,7 @@ import { render, RenderPosition, replace, remove } from '../utils/render.js';
 import EditPointView from '../view/edit-point';
 import PointView from '../view/point.js';
 import { destinations } from '../mock/destination-mock';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -89,12 +90,14 @@ export default class Point {
     }
   }
 
-  _pointEditClickHandler() {
+  _handlePointEditClick() {
     this._replacePointToForm();
   }
 
-  _favouriteClickHandler() {
+  _handleFavouriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._point,
@@ -105,12 +108,16 @@ export default class Point {
     );
   }
 
-  _editFormSubmitHandler(point) {
-    this._changeData(point);
+  _handleEditFormSubmit(point) {
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
     this._replaceFormToPoint();
   }
 
-  _editFormCloseHandler() {
+  _handleEditFormClose() {
     this._pointEditComponent.reset(this._point);
     this._replaceFormToPoint();
     document.removeEventListener('keydown', this._escKeyDownHandler);

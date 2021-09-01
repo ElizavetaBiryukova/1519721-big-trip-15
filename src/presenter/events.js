@@ -33,9 +33,14 @@ export default class Events {
     this._sortComponent = new TripSortView(this._currentSortType);
     this._noPointComponent = new NoPointView();
 
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._changePointHandler = this._changePointHandler.bind(this);
-    this._сhangeModeHandler = this._сhangeModeHandler.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._destinationsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -56,13 +61,16 @@ export default class Events {
     return this._pointsModel.getPoints();
   }
 
-  _сhangeModeHandler() {
+  _handleModeChange() {
     this._pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
-  _changePointHandler(updatedPoint) {
-    //Здесь будет вызов обновления модели
-    this._pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
   }
 
   _handleSortTypeChange(sortType) {
@@ -81,7 +89,7 @@ export default class Events {
   }
 
   _renderPoint(point, destinations) {
-    const pointPresenter = new PointPresenter(this._pointsComponent, this._changePointHandler, this._сhangeModeHandler, this._destinations);
+    const pointPresenter = new PointPresenter(this._pointsComponent, this._handleViewAction, this._handleModeChange, this._destinations);
     pointPresenter.init(point, destinations);
     this._pointPresenters.set(point.id, pointPresenter);
   }

@@ -4,6 +4,18 @@ export const SortType = {
   TIME: 'time',
 };
 
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export const SENTENCE_COUNT = 5;
 export const MIN_PICTURE = 1;
 export const MAX_PICTURE = 5;

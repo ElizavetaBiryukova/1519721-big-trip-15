@@ -6,18 +6,13 @@ import {
   RenderPosition,
   remove
 } from '../utils/render.js';
-// import {
-//   updateItem
-// } from '../utils/common.js';
 import PointPresenter from '../presenter/point.js';
 import {
   sortByDate,
   sortByPrice,
   sortByTime
 } from '../utils/point.js';
-import {
-  SortType
-} from '../const.js';
+import { SortType, UpdateType, UserAction } from '../const.js';
 
 
 export default class Events {
@@ -35,7 +30,7 @@ export default class Events {
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._changePointHandler = this._changePointHandler.bind(this);
+
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
@@ -66,11 +61,31 @@ export default class Events {
   }
 
   _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this._pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this._pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointsModel.deletePoint(updateType, update);
+        break;
+    }
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._pointPresenters(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+
+        break;
+      case UpdateType.MAJOR:
+
+        break;
+    }
   }
 
   _handleSortTypeChange(sortType) {

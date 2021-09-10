@@ -1,14 +1,13 @@
 import { render, RenderPosition, replace, remove } from '../utils/render.js';
 import EditPointView from '../view/edit-point';
 import PointView from '../view/point.js';
-import { destinations } from '../mock/destination-mock';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, Keys} from '../const.js';
+import { isDatesEqual } from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
-const Keys = { ESCAPE: 'Escape', ESC: 'Esc' };
 
 export default class Point {
   constructor(pointContainer, changeData, changeMode) {
@@ -20,26 +19,29 @@ export default class Point {
     this._pointEditComponent = null;
     this._mode = Mode.DEFAULT;
 
-    this._pointEditClickHandler = this._pointEditClickHandler.bind(this);
-    this._favouriteClickHandler = this._favouriteClickHandler.bind(this);
-    this._editFormSubmitHandler = this._editFormSubmitHandler.bind(this);
-    this._editFormCloseHandler = this._editFormCloseHandler.bind(this);
+    this._handlePointEditClick = this._handlePointEditClick.bind(this);
+    this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
+    this._handleEditFormSubmit = this._handleEditFormSubmit.bind(this);
+    this._handleEditFormClose = this._handleEditFormClose.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(point) {
-    this._point = point;
+  init(points, destinations) {
+    this._points = points;
+    this._destinations = destinations;
 
     const prevPointComponent = this._pointComponent;
     const prevPointEditComponent = this._pointEditComponent;
 
-    this._pointComponent = new PointView(point);
-    this._pointEditComponent = new EditPointView(point, destinations);
+    this._pointComponent = new PointView(points);
+    this._pointEditComponent = new EditPointView(points, destinations);
 
-    this._pointComponent.setPointEditClickHandler(this._pointEditClickHandler);
-    this._pointComponent.setFavouriteClickHandler(this._favouriteClickHandler);
-    this._pointEditComponent.setEditFormSubmitHandler(this._editFormSubmitHandler);
-    this._pointEditComponent.setEditFormCloseHandler(this._editFormCloseHandler);
+    this._pointComponent.setPointEditClickHandler(this._handlePointEditClick);
+    this._pointComponent.setFavouriteClickHandler(this._handleFavouriteClick);
+    this._pointEditComponent.setEditFormSubmitHandler(this._handleEditFormSubmit);
+    this._pointEditComponent.setEditFormCloseHandler(this._handleEditFormClose);
+    this._pointEditComponent.setEditFormDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this._pointContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -85,7 +87,7 @@ export default class Point {
   _escKeyDownHandler(evt) {
     if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
       evt.preventDefault();
-      this._pointEditComponent.reset(this._point);
+      this._pointEditComponent.reset(this._points);
       this._replaceFormToPoint();
     }
   }
@@ -100,26 +102,38 @@ export default class Point {
       UpdateType.MINOR,
       Object.assign(
         {},
-        this._point,
+        this._points,
         {
-          isFavorite: !this._point.isFavorite,
+          isFavorite: !this._points.isFavorite,
         },
       ),
     );
   }
 
-  _handleEditFormSubmit(point) {
+  _handleEditFormSubmit(update) {
+    const isMinorUpdate =
+    !isDatesEqual(this._points.dateFrom, update.dateFrom) ||
+    this._points.basePrice !== update.basePrice;
+
     this._changeData(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      point,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
     );
     this._replaceFormToPoint();
   }
 
   _handleEditFormClose() {
-    this._pointEditComponent.reset(this._point);
+    this._pointEditComponent.reset(this._points);
     this._replaceFormToPoint();
     document.removeEventListener('keydown', this._escKeyDownHandler);
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   }
 }

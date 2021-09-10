@@ -1,3 +1,11 @@
+export const POINTS_COUNT =15;
+
+export const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export const SortType = {
   DAY: 'day',
   PRICE: 'price',
@@ -220,3 +228,5 @@ optionsMap.set('restaurant', restaurantOptions);
 optionsMap.set('taxi', taxiOptions);
 optionsMap.set('train', trainOptions);
 optionsMap.set('transport', transportOptions);
+
+export const Keys = { ESCAPE: 'Escape', ESC: 'Esc' };

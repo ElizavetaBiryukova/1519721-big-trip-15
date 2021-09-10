@@ -1,14 +1,13 @@
 import dayjs from 'dayjs';
+import { getRandomInteger } from './common.js';
 
-const isEventComing = (point) => {
-  const today = dayjs();
-  return (today.isAfter(dayjs(point.dateFrom), 'd') || today.isSame(dayjs(point.dateFrom), 'd'));
-};
+const isEventComing = (point) => (
+  dayjs(point.dateFrom).isAfter(dayjs(), 'd') || dayjs(point.dateFrom).isSame(dayjs(), 'D')
+);
 
-const isEventExpired = (point) => {
-  const today = dayjs();
-  return today.isBefore(dayjs(point.dateFrom), 'd');
-};
+const isEventExpired = (point) => (
+  dayjs(point.dateTo).isBefore(dayjs(), 'd')
+);
 
 const humanizeFullDateAndTime = (date) => (
   dayjs(date).format('DD/MM/YY HH:MM')
@@ -65,6 +64,16 @@ export const sortByDate = (pointA, pointB) => dayjs(pointA.dateFrom) - dayjs(poi
 export const sortByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 export const sortByTime = (pointA, pointB) => (dayjs(pointB.dateTo) - dayjs(pointB.dateFrom)) - (dayjs(pointA.dateTo) - dayjs(pointA.dateFrom));
+
+export const isDatesEqual = (dateA, dateB) => (
+  (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D')
+);
+
+export const getDateTo = (dateFrom) => {
+  const minEventDuration = dayjs(dateFrom).add(10, 'm');
+  const maxEventDuration = dayjs(dateFrom).add(36, 'h');
+  return dayjs(getRandomInteger(minEventDuration, maxEventDuration)).format('YYYY-MM-DDTHH:mm');
+};
 
 export {
   humanizeDuration,

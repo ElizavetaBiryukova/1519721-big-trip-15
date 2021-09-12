@@ -1,11 +1,33 @@
-import {getEventPeriod} from '../utils/point.js';
+import {
+  getEventPeriod
+} from '../utils/point.js';
 import AbstractView from './abstract.js';
 
-const createTripInfoTemplate = (points) => {
+const MIN_TITLE_LENGTH = 2;
 
-  const route = points.map((point) => (
-    point.destination.name
-  )).join(' &mdash; ');
+const removeDuplPointsNames = (points) => {
+  const unduplicatedPointsNames = [points[0].destination.name];
+  for (let i = 0; i < points.length - 1; i++) {
+    const current = points[i].destination.name;
+    const next = points[i + 1].destination.name;
+    if (next !== current) {
+      unduplicatedPointsNames.push(next);
+    }
+  }
+  return unduplicatedPointsNames;
+};
+
+const getRoutePointsTitle = (points) => {
+  const routeTitle = removeDuplPointsNames(points);
+  const lastPoint = routeTitle.slice([routeTitle.length - 1]);
+  if (routeTitle.length > MIN_TITLE_LENGTH) {
+    return `${routeTitle.slice(0, MIN_TITLE_LENGTH - 1).join(' &mdash; ')}
+       &mdash; . . . &mdash; ${lastPoint.join(' &mdash; ')}`;
+  }
+  return routeTitle.join(' &mdash; ');
+};
+
+const createTripInfoTemplate = (points) => {
 
   const sumValues = (accumulator, currentValue) => (
     accumulator + currentValue
@@ -17,7 +39,7 @@ const createTripInfoTemplate = (points) => {
   });
   return `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
-        <h1 class="trip-info__title">${route}</h1>
+        <h1 class="trip-info__title">${getRoutePointsTitle(points)}</h1>
         <p class="trip-info__dates">${getEventPeriod(points[0], points[points.length - 1])}</p>
       </div>
       <p class="trip-info__cost">

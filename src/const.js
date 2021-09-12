@@ -1,7 +1,27 @@
+export const POINTS_COUNT =15;
+
+export const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export const SortType = {
   DAY: 'day',
   PRICE: 'price',
   TIME: 'time',
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
 
 export const SENTENCE_COUNT = 5;
@@ -208,3 +228,5 @@ optionsMap.set('restaurant', restaurantOptions);
 optionsMap.set('taxi', taxiOptions);
 optionsMap.set('train', trainOptions);
 optionsMap.set('transport', transportOptions);
+
+export const Keys = { ESCAPE: 'Escape', ESC: 'Esc' };
